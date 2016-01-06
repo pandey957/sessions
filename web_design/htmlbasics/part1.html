@@ -1,0 +1,27 @@
+<html>
+<head>
+  <script>
+  var colors = ['blue','cyan','gold','gray','green','magenta','orange','red','white','yello'];
+  var target = Math.floor(Math.random() * colors.length);    
+  onload=play_game();  
+  function play_game()
+  {    
+    var play_continue = true;
+    var count = 0;
+    alert("Correct color is: " + colors[target]);
+    while(play_continue)
+    {
+      var guess = prompt("I am thinking of one of these colors:\n\n" + colors.join() + "\n\nWhat color i am thinking of?");
+      count += 1;
+      if (guess == colors[target])
+      {
+        alert("You have found the color.\nThanks for playing.\nAlso you got the matchin in " + count + " attempts.");
+        play_continue = false;
+      }      
+    }
+  }
+  </script>
+</head>
+<body>  
+</body>
+<html>
