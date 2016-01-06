@@ -1,0 +1,11 @@
+{
+  "name": "quadsolve",
+  "version": "1.0.0",
+  "description": "quadratic solve",
+  "main": "solve.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
