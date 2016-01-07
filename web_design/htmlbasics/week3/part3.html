@@ -17,30 +17,9 @@
   numberOfFaces = 5;
   height = 50;
   var theLeftSide = document.getElementById("leftSide");
-  var theRightSide = document.getElementById("rightSide");
-  var theBody = document.getElementsByTagName("body")[0]; 
-  theBody.addEventListener('click',gameOver);
-  
-  function nextLevel(event){
-    event.stopPropagation();
-    numberOfFaces += 5;
-    generateFaces();
-  };
-
-  function gameOver() {
-    alert("Game Over!");
-    theBody.removeEventListener('click',gameOver)
-    theLeftSide.lastChild.removeEventListener('click',nextLevel);    
-  }; 
-  
-
+  var theRightSide = document.getElementById("rightSide")
   function generateFaces(){
-    count = 0;    
-    while(theLeftSide.hasChildNodes())
-      {
-        theLeftSide.removeChild(theLeftSide.lastChild);
-      }
-    if(theRightSide.firstChild)theRightSide.firstChild.parentNode.removeChild(theRightSide.firstChild);      
+    count = 0;
     while (count < numberOfFaces)
     {
       topLength = Math.floor((Math.random()*(500-height)));
@@ -52,11 +31,12 @@
       count++;
     }
     theRightSide.appendChild(theLeftSide.cloneNode(true));
-    lastRightChild = theRightSide.firstChild.lastChild;
-    lastRightChild.parentNode.removeChild(lastRightChild);
-    theLeftSide.lastChild.addEventListener('click',nextLevel);
-  }; 
-  window.addEventListener('load',generateFaces);  
+    lastleftChild = theLeftSide.lastChild;
+    lastRightChild = theRightSide.lastChild;
+    lastleftChild.parentNode.removeChild(lastleftChild);
+  };
+  window.addEventListener('load',generateFaces);
+
 
 </script>
 </body>
