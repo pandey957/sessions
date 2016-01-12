@@ -1,19 +1,19 @@
 {
   "name": "conFusion",
+  "version": "1.0.0",
   "description": "Website for an awesome restaurant",
   "main": "index.html",
-  "authors": [
-    "Satyendra Pandey <satyendra.pandey@talentica.com>"
-  ],
-  "license": "Y",
+  "moduleType": [],
   "keywords": [
     "conFusion",
     "Fusion",
     "Restaurant"
   ],
-  "homepage": "https://github.com/pandey957/sessions",
-  "moduleType": [],
-  "private": true,
+  "authors": [
+    "Jogesh Muppala"
+  ],
+  "license": "MIT",
+  "homepage": "",
   "ignore": [
     "**/.*",
     "node_modules",
@@ -22,7 +22,8 @@
     "tests"
   ],
   "dependencies": {
-    "bootstrap": "~3.3.6",
-    "font-awesome": "~4.5.0"
+    "bootstrap": "~3.3.5",
+    "font-awesome": "~4.4.0",
+    "angular": "~1.4.7"
   }
 }
