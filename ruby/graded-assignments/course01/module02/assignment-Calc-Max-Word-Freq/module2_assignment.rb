@@ -2,21 +2,28 @@
 
 #Implement a class called LineAnalyzer.
 class LineAnalyzer
-  #Implement the following read-only attributes in the LineAnalyzer class. 
-  #* highest_wf_count - a number with maximum number of occurrences for a single word (calculated)
-  #* highest_wf_words - an array of words with the maximum number of occurrences (calculated)
-  #* content          - the string analyzed (provided)
-  #* line_number      - the line number analyzed (provided)
+  attr_readonly :highest_wf_count, :highest_wf_words, :content, :line_number
+  
 
   #Add the following methods in the LineAnalyzer class.
   #* initialize() - taking a line of text (content) and a line number
   #* calculate_word_frequency() - calculates result
 
+
+  def initialize(line, line_number)
+    self.content = line
+    self.line_number = line_number
+    calculate_word_frequency
+  end
   #Implement the initialize() method to:
   #* take in a line of text and line number
   #* initialize the content and line_number attributes
   #* call the calculate_word_frequency() method.
 
+
+  def calculate_word_frequence    
+    words = line.split(' ').group_by(&:capitalize).map {|k,v| [k, v.length]}        
+  end
   #Implement the calculate_word_frequency() method to:
   #* calculate the maximum number of times a single word appears within
   #  provided content and store that in the highest_wf_count attribute.
