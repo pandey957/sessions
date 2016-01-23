@@ -1,0 +1,12 @@
+.album-cover{
+	width: 25%;
+	border: 10px solid gray;
+}
+
+.photo-list{width: 25%;}
+.single-photo{width: 75%;}
+
+.image-resize{width: 25%;}
+
+.complete{background-color: green;}
+.incomplete{background-color: orange;}

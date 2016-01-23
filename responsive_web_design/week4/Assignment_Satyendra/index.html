@@ -1,0 +1,84 @@
+<!-- This is a first example of using a template -->
+
+<head>
+
+<!-- include our libraries and css files -->
+
+<script src="js/jquery-2.1.4.min.js"></script>
+<script src="js/handlebars-v3.0.3.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="AnimalsData.js"></script>
+<script src="assignment.js"></script>
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="assignment.css" rel="stylesheet">
+
+</head>
+<body>
+  <div class="container">
+  	<div class="page-header">
+    <h1>My photo albums </h1>
+    </div>    
+    <ul class="nav nav-tabs">
+      <li role="" class="active" id="li-albums-tab"><a href="#" id="albums-tab" >Category</a></li>
+      <li role="" id="li-photos-tab"><a href="#" id="photos-tab" >Photos</a></li>
+      <li role="" id="li-photo-tab"><a href="#" id="photo-tab" >Photo</a></li>
+      <li role="" id="li-about-tab"><a href="#" id="about-tab">About This Page</a></li>
+    </ul>
+    <br/><br/>
+    <div id="content"  class="container-fluid"  role="main">
+    </div>
+  </div> <!-- / container -->
+  <script id="albums-template" type="text/x-handlebars-template">
+    <div class="row">
+    {{#each category}}
+      <div class="col-xs-12 col-md-3"> 
+        <div class="album-thumbnail"  data-id="{{@index}}">
+          {{#each animals}}
+          {{#if @first}}<img class="crop-img" src="{{image2}}" alt=""/>{{/if}}{{/each}}
+          <div class="caption">
+            <h4> {{name}} </h4>
+            <p>{{animals.length}} photos</p>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+	</div>
+  </script>
+
+  <script id="photos-template" type="text/x-handlebars-template">
+    <div class="row">
+    {{#each animals}}
+      <div class="col-xs-12 col-md-3"> 
+        <div class="photo-thumbnail"  data-id="{{@index}}">
+          <img class="crop-img2" src="{{image1}}" alt=""/> 
+          <img class="crop-img2" src="{{image2}}" alt=""/>
+          <div class="caption">
+	          <h3>{{name}}</h3>
+	          <p>{{description}}</p>
+	      </div>
+        </div>       
+      </div> <!-- / col -->
+    {{/each}}
+    </div> <!-- / row -->
+  </script>
+  <script id="photo-template" type="text/x-handlebars-template">
+  <div class="row">
+    <div class="col-xs-12 col-md-12"> 
+        <img src="{{image1}}" alt=""/> 
+        <img src="{{image2}}" alt=""/>
+          
+        <div class="caption">
+            <h3>{{name}}</h3>
+            <p>{{description}}</p>
+        </div>
+      </div> <!-- / col -->
+
+  </div> <!-- / row -->
+</script>
+  <script id="about-template" type="text/x-handlebars-template">
+    <div class="row">
+    <h2>Hello welcome to this page</h2>
+    <p>Please navigate through tabs to see all the categories and animals. You can also individually navigate to tabs and that will display some default animals and/or their photos</p>
+	</div>
+</script>
+</body>

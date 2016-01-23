@@ -1,0 +1,9 @@
+/* put your css code here */
+.crop-img{
+  max-height:150px;
+  max-width:100%;
+}
+.crop-img2{
+  max-height:75px;
+  max-width:100%;
+}

@@ -1,0 +1,11 @@
+Package: top10
+Type: Package
+Title: Building a prediction model from the Top 10 Features
+Version: 0.1
+Date: 2016-01-15
+Authors@R: person("Satyendra", "Pandey", email = "urpandey957@gmail.com", role = c("aut", "cre"))
+Description: Build function for predicting from models from selecting top 10
+    predictor in a data set.
+License: GPL-3
+LazyData: TRUE
+RoxygenNote: 5.0.1
