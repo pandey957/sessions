@@ -143,6 +143,27 @@ def read_train_test():
     df2.rename(columns={'timestamp':'unknow_loc_cnt'}, inplace=True)
     event_day_loc = pd.merge(event_day_loc_cnt,df2, how='outer', on='device_id').fillna(0)
 
+    # Grouping data based on label category
+    app_label_df = pd.read_csv(os.path.join(data_dir,'app_labels.csv'))
+    label_df = pd.read_csv(os.path.join(data_dir,'label_categories.csv'))
+    df2 = pd.merge(app_label_df, label_df, how='left', on = 'label_id')
+    del df2['label_id']
+    app_events_df = pd.read_csv(os.path.join(data_dir,'app_events.csv'), dtype={'device_id':np.str})
+    events_df = pd.read_csv(os.path.join(data_dir,'events.csv'))
+    del events_df['longitude']
+    del events_df['latitude']
+    del events_df['timestamp']
+    device_evnt_app = pd.merge(events_df, app_events_df, how='inner', on='event_id')
+    device_evnt_app = device_evnt_app.ix[device_evnt_app.is_active==1]
+    df3 = pd.merge(device_evnt_app,df2, how='left', on = 'app_id')
+    category_id = df3.ix[:,['device_id','category','is_active']].groupby(['device_id','category']).count().reset_index()
+    category_device_df = pd.pivot_table(category_id, values='is_active',columns='category',
+                                    index='device_id', aggfunc=np.sum).reset_index()
+    del category_device_df['unknown']
+    category_device_df.fillna(0,inplace=True)
+
+
+
     # Train
     print('Read train...')
     train = pd.read_csv(os.path.join(data_dir,"gender_age_train.csv"), dtype={'device_id': np.str})
@@ -180,4 +201,3 @@ print('Features [{}]: {}'.format(len(features), sorted(features)))
 test_prediction, score = run_xgb(train, test, features, 'group')
 print("LS: {}".format(round(score, 5)))
 create_submission(score, test, test_prediction)
-
