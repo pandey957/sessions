@@ -5,15 +5,14 @@ from sklearn.cross_validation import train_test_split
 import xgboost as xgb
 import random
 import time
-from sklearn.metrics import log_loss
 import os
-data_dir = '/home/satyendra/sessions/kaggle/data/talking_data'
-
+from sklearn.metrics import log_loss
 random.seed(12345)
-
-def run_xgb(train, test, features, target, random_state=0):
-    eta = 0.015
-    max_depth = 6
+import sys
+#sys.stdout = open('test.log','wb')
+def run_xgb(train, test, features, target, depth=9, random_state=0):
+    eta = 0.005
+    max_depth = depth
     subsample = 0.45
     colsample_bytree = 0.5
     start_time = time.time()
@@ -87,6 +86,7 @@ def map_column(table, f):
 
 def read_train_test():
     # App
+    data_dir = '/datadrive/satyendra.pandey/sessions/kaggle/data'
     print('Read apps...')
     app = pd.read_csv(os.path.join(data_dir,"app_events.csv"), dtype={'device_id': np.str})
     app['appcounts'] = app.groupby(['event_id'])['app_id'].transform('count')
@@ -105,25 +105,43 @@ def read_train_test():
 
     # Phone brand
     print('Read brands...')
-    device_df = pd.read_csv(os.path.join(data_dir,"phone_brand_device_model.csv"), dtype={'device_id': np.str})
-    #pbd.drop_duplicates('device_id', keep='first', inplace=True)
-    #pbd = map_column(pbd, 'phone_brand')
-    #pbd = map_column(pbd, 'device_model')
-    device_df['phone'] = device_df['phone_brand'] + device_df['device_model']
-    del device_df['phone_brand']
-    del device_df['device_model']
-    device_df['phone'] = device_df['phone'].map(lambda x: x.replace(' ',''))
-    device__df.drop_duplicates('device_id',keep='first',inplace='True')
-    device_df = map_column(device_df, 'phone')
-    from sklearn.feature_extraction.text import CountVectorizer
-    vectorizer = CountVectorizer(min_df=1)
-    X = vectorizer.fit_transform(device_df['phone'])
-    df1 = pd.DataFrame(X.toarray(),columns=vectorizer.get_feature_names())
-    del device_df['phone']
-    pbd = pd.concat([device_df,df1],axis=1)
-    device_df = None
-    df1 = None
-    X = None
+    pbd = pd.read_csv(os.path.join(data_dir,"phone_brand_device_model.csv"), dtype={'device_id': np.str})
+    pbd.drop_duplicates('device_id', keep='first', inplace=True)
+    pbd = map_column(pbd, 'phone_brand')
+    pbd = map_column(pbd, 'device_model')
+
+    # Event_HourWise
+    #dateparse = lambda dates: pd.datetime.strptime(dates, '%Y-%m-%d %H:%M:%S')
+    event_df= pd.read_csv(os.path.join(data_dir,'events.csv'), dtype = {'device_id': np.str} )
+    del event_df['longitude']
+    del event_df['latitude']
+    event_df['hour'] = event_df['timestamp'].map(lambda x: 'hour_' + x.split(' ')[-1][:2])
+    del event_df['timestamp']
+    event_df['event_id'] = 1
+    event_df1= pd.pivot_table(event_df, values='event_id', columns = ['hour'], index='device_id', aggfunc=np.sum)
+    final_df = event_df1.reset_index()
+
+    # Lookign into locations used per day and unknown locations
+    dateparse = lambda dates: pd.datetime.strftime(pd.datetime.strptime(dates, '%Y-%m-%d %H:%M:%S'),"%a")
+    event_df= pd.read_csv(os.path.join(data_dir,'events.csv'), dtype = {'device_id': np.str},
+                      date_parser=dateparse,parse_dates=['timestamp'] )
+    del event_df['event_id']
+    df1 = event_df.ix[(event_df.longitude!=0.00) | (event_df.latitude!=0.00),
+                  ['device_id','timestamp','longitude','latitude']]
+    df1['loc'] = df1.longitude.astype('str') + '-' + df1.latitude.astype('str')
+    del df1['longitude']
+    del df1['latitude']
+    df1.drop_duplicates(['device_id','loc','timestamp'],inplace=True)
+    df1.groupby(['device_id','timestamp']).count().reset_index(inplace=True)
+    df1.ix[:,'loc'] = 1
+    event_day_loc_cnt = pd.pivot_table(df1,values='loc', columns='timestamp',
+                                   index='device_id', aggfunc=np.sum).reset_index()
+    df2 = event_df.ix[(event_df.longitude==0.00) & (event_df.latitude==0.00)]
+    df2 = df2.groupby(['device_id']).count().reset_index()
+    del df2['latitude']
+    del df2['longitude']
+    df2.rename(columns={'timestamp':'unknow_loc_cnt'}, inplace=True)
+    event_day_loc = pd.merge(event_day_loc_cnt,df2, how='outer', on='device_id').fillna(0)
 
     # Train
     print('Read train...')
@@ -134,6 +152,8 @@ def read_train_test():
     train = pd.merge(train, pbd, how='left', on='device_id', left_index=True)
     train = pd.merge(train, events_small, how='left', on='device_id', left_index=True)
     train = pd.merge(train, e1_small, how='left', on='device_id', left_index=True)
+    train = pd.merge(train,final_df, how = 'left', on='device_id', left_index=True)
+    train = pd.merge(train,event_day_loc, how = 'left', on='device_id', left_index=True)
     train.fillna(-1, inplace=True)
 
     # Test
@@ -142,6 +162,8 @@ def read_train_test():
     test = pd.merge(test, pbd, how='left', on='device_id', left_index=True)
     test = pd.merge(test, events_small, how='left', on='device_id', left_index=True)
     test = pd.merge(test, e1_small, how='left', on='device_id', left_index=True)
+    test = pd.merge(test,final_df, how = 'left', on='device_id', left_index=True)
+    test = pd.merge(test,event_day_loc, how = 'left', on='device_id', left_index=True)
     test.fillna(-1, inplace=True)
 
     # Features
@@ -158,3 +180,4 @@ print('Features [{}]: {}'.format(len(features), sorted(features)))
 test_prediction, score = run_xgb(train, test, features, 'group')
 print("LS: {}".format(round(score, 5)))
 create_submission(score, test, test_prediction)
+
