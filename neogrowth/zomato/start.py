@@ -7,7 +7,7 @@ def insert_data(base_url, city, page = 1):
     data = BeautifulSoup(urlopen(url),'html.parser')
     for item in data.findAll('div','search-snippet-card'):
         #print item
-        category = None
+        category = ''
         category_html = item.find('div','res-snippet-small-establishment')
         if category_html:
             category = category_html.text.replace(',','/')
