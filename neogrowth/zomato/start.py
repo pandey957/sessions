@@ -24,8 +24,8 @@ if __name__ == '__main__':
     url = 'https://www.zomato.com/pune/restaurants?credit-card=1&page='
     outfile = open('zomato.csv','wb')
     wrtr = UnicodeWriter(outfile)
-    wrtr.writerow(['City, Category','Name', 'Phone', 'Address'])
-    cities = ['ahmedabad','bangalore','chennai','hyderabad','mumbai','pune','kolkata','ncr']
+    wrtr.writerow(['City', 'Category','Name', 'Phone', 'Address'])
+    cities = ['jaipur','chandigarh']
     for city in cities:
         base_url = url.replace('pune',city)
         insert_data(base_url, city)
