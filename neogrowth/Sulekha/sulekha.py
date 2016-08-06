@@ -23,8 +23,8 @@ def writerecord(base_url,subcategory,city,page=1):
 
 if __name__ == '__main__':
     base_url = 'http://yellowpages.sulekha.com/clothing-accessories_delhi_clistings'
-    cities = ['jaipur','chandigarh','ahmedabad','bangalore','chennai','delhi','hyderabad','kolkata','mumbai','pune']
-    outfile = open('sulekha.csv','wb')
+    cities = ['delhi','hyderabad','kolkata','mumbai','pune']
+    outfile = open('sulekha1.csv','wb')
     wrtr = UnicodeWriter(outfile,delimiter=';')
     wrtr.writerow(['City','Category','Name','Phone','Address'])
     for city in cities:
